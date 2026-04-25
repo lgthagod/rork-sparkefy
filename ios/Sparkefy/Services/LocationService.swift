@@ -1,5 +1,6 @@
 import Foundation
 import CoreLocation
+import Observation
 
 @Observable
 @MainActor
@@ -27,16 +28,14 @@ class LocationService {
     }
 
     private func geocodeZipCode(_ zip: String) {
-        let geocoder = CLGeocoder()
-        geocoder.geocodeAddressString(zip) { [weak self] placemarks, _ in
-            Task { @MainActor in
-                if let location = placemarks?.first?.location {
-                    self?.currentLatitude = location.coordinate.latitude
-                    self?.currentLongitude = location.coordinate.longitude
-                    UserDefaults.standard.set(location.coordinate.latitude, forKey: "sparkefy_lat")
-                    UserDefaults.standard.set(location.coordinate.longitude, forKey: "sparkefy_lon")
-                }
-            }
+        Task {
+            let geocoder = CLGeocoder()
+            let placemarks = try? await geocoder.geocodeAddressString(zip)
+            guard let coordinate = placemarks?.first?.location?.coordinate else { return }
+            currentLatitude = coordinate.latitude
+            currentLongitude = coordinate.longitude
+            UserDefaults.standard.set(coordinate.latitude, forKey: "sparkefy_lat")
+            UserDefaults.standard.set(coordinate.longitude, forKey: "sparkefy_lon")
         }
     }
 

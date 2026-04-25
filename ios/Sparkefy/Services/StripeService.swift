@@ -1,6 +1,7 @@
 import Foundation
 import StripePaymentSheet
 import UIKit
+import Observation
 
 @Observable
 @MainActor
@@ -62,7 +63,7 @@ class StripeService {
             var appearance = PaymentSheet.Appearance()
             appearance.colors.primary = UIColor(red: 0, green: 0.635, blue: 1, alpha: 1)
             appearance.colors.componentBackground = .secondarySystemGroupedBackground
-            appearance.cornerRadius = 12
+            appearance.primaryButton.cornerRadius = 12
             configuration.appearance = appearance
 
             paymentSheet = PaymentSheet(
@@ -154,7 +155,7 @@ class StripeService {
         return nil
     }
 
-    private nonisolated static func topViewController(from vc: UIViewController) -> UIViewController {
+    private static func topViewController(from vc: UIViewController) -> UIViewController {
         if let presented = vc.presentedViewController {
             return topViewController(from: presented)
         }
@@ -230,7 +231,7 @@ nonisolated enum StripeServiceError: Error, LocalizedError, Sendable {
     }
 }
 
-nonisolated enum StripeConfig: Sendable {
+enum StripeConfig {
     static var publishableKey: String {
         Config.allValues["EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY"] ?? ""
     }

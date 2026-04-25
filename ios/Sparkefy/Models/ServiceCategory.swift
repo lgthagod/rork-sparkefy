@@ -31,10 +31,10 @@ nonisolated enum ServiceCategory: String, Codable, Sendable, CaseIterable, Ident
 
     var color: Color {
         switch self {
-        case .carDetailing: SparkefyTheme.primaryBlue
+        case .carDetailing: Color(red: 0, green: 0.635, blue: 1)
         case .boatDetailing: Color(red: 0.2, green: 0.6, blue: 0.9)
         case .pressureWashing: Color(red: 0.4, green: 0.7, blue: 0.95)
-        case .yardMaintenance: SparkefyTheme.accentGreen
+        case .yardMaintenance: Color(red: 0, green: 0.773, blue: 0.557)
         case .homeCleaning: Color(red: 0.6, green: 0.4, blue: 0.8)
         }
     }

@@ -1,4 +1,5 @@
 import SwiftUI
+import Observation
 
 nonisolated enum RadiusOption: Int, CaseIterable, Sendable, Identifiable {
     case ten = 10

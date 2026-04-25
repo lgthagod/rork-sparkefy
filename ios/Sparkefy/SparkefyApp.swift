@@ -1,6 +1,7 @@
 import SwiftUI
 import StripePaymentSheet
 import Supabase
+import Auth
 
 @main
 struct SparkefyApp: App {
@@ -20,7 +21,7 @@ struct SparkefyApp: App {
             ContentView()
                 .environment(appViewModel)
                 .onOpenURL { url in
-                        SupabaseService.shared.client?.auth.handle(url)
+                    SupabaseService.shared.client?.auth.handle(url)
                     let stripeHandled = StripeAPI.handleURLCallback(with: url)
                     if !stripeHandled { }
                 }

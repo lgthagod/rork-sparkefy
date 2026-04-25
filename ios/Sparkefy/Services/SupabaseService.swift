@@ -1,6 +1,6 @@
 import Foundation
 import Supabase
-import Auth
+import Observation
 
 @Observable
 @MainActor
@@ -93,12 +93,12 @@ class SupabaseService {
 
     func verifyPhoneOTP(phone: String, code: String) async throws {
         guard let client else { throw SparkefyError.notConfigured }
-        try await client.auth.verifyOTP(phone: phone, token: code, type: .sms)
+        _ = try await client.auth.verifyOTP(phone: phone, token: code, type: .sms)
     }
 
     func updateUserPhone(phone: String) async throws {
         guard let client else { throw SparkefyError.notConfigured }
-        try await client.auth.update(user: UserAttributes(phone: phone))
+        _ = try await client.auth.update(user: UserAttributes(phone: phone))
     }
 
     func upsertProfile(_ profile: SupabaseProfile) async throws {
@@ -239,7 +239,7 @@ class SupabaseService {
             .eq("provider_id", value: userId)
             .execute()
             .value
-        return (asCustomer + asProvider).sorted { ($0.updatedAt ?? "") > ($1.updatedAt ?? "") }
+        return (asCustomer + asProvider).sorted { ($0.updatedAt ?? .distantPast) > ($1.updatedAt ?? .distantPast) }
     }
 
     func fetchMessages(conversationId: String) async throws -> [SupabaseMessage] {
@@ -438,31 +438,31 @@ nonisolated enum SparkefyError: Error, LocalizedError, Sendable {
 }
 
 nonisolated struct SupabaseProfile: Codable, Sendable {
-    let id: String
-    var name: String?
-    var email: String?
-    var phone: String?
-    var avatarUrl: String?
-    var role: String?
-    var zipCode: String?
-    var latitude: Double?
-    var longitude: Double?
-    var bio: String?
-    var rating: Double?
-    var reviewCount: Int?
-    var jobsCompleted: Int?
-    var responseRate: Double?
-    var isVerified: Bool?
-    var verificationStatus: String?
-    var insuranceUploaded: Bool?
-    var insuranceUrl: String?
-    var backgroundCheckPassed: Bool?
-    var twoFactorEnabled: Bool?
-    var phoneVerified: Bool?
-    var stripeAccountId: String?
-    var stripeOnboardingComplete: Bool?
-    var serviceCategories: [String]?
-    var createdAt: String?
+    var id: String
+    var name: String? = nil
+    var email: String? = nil
+    var phone: String? = nil
+    var avatarUrl: String? = nil
+    var role: String? = nil
+    var zipCode: String? = nil
+    var latitude: Double? = nil
+    var longitude: Double? = nil
+    var bio: String? = nil
+    var rating: Double? = nil
+    var reviewCount: Int? = nil
+    var jobsCompleted: Int? = nil
+    var responseRate: Double? = nil
+    var isVerified: Bool? = nil
+    var verificationStatus: String? = nil
+    var insuranceUploaded: Bool? = nil
+    var insuranceUrl: String? = nil
+    var backgroundCheckPassed: Bool? = nil
+    var twoFactorEnabled: Bool? = nil
+    var phoneVerified: Bool? = nil
+    var stripeAccountId: String? = nil
+    var stripeOnboardingComplete: Bool? = nil
+    var serviceCategories: [String]? = nil
+    var createdAt: Date? = nil
 
     nonisolated enum CodingKeys: String, CodingKey {
         case id, name, email, phone, bio, rating, latitude, longitude
@@ -487,26 +487,26 @@ nonisolated struct SupabaseProfile: Codable, Sendable {
 }
 
 nonisolated struct SupabaseServiceListing: Codable, Sendable {
-    let id: String?
-    var providerId: String?
-    var providerName: String?
-    var providerRating: Double?
-    var providerReviewCount: Int?
-    var isVerified: Bool?
-    var category: String?
-    var title: String?
-    var description: String?
-    var basePrice: Double?
-    var priceUnit: String?
-    var zipCode: String?
-    var latitude: Double?
-    var longitude: Double?
-    var serviceRadius: Int?
-    var imageUrls: [String]?
-    var tags: [String]?
-    var estimatedDuration: String?
-    var isAvailable: Bool?
-    var createdAt: String?
+    var id: String? = nil
+    var providerId: String? = nil
+    var providerName: String? = nil
+    var providerRating: Double? = nil
+    var providerReviewCount: Int? = nil
+    var isVerified: Bool? = nil
+    var category: String? = nil
+    var title: String? = nil
+    var description: String? = nil
+    var basePrice: Double? = nil
+    var priceUnit: String? = nil
+    var zipCode: String? = nil
+    var latitude: Double? = nil
+    var longitude: Double? = nil
+    var serviceRadius: Int? = nil
+    var imageUrls: [String]? = nil
+    var tags: [String]? = nil
+    var estimatedDuration: String? = nil
+    var isAvailable: Bool? = nil
+    var createdAt: Date? = nil
 
     nonisolated enum CodingKeys: String, CodingKey {
         case id, category, title, description, tags, latitude, longitude
@@ -527,31 +527,31 @@ nonisolated struct SupabaseServiceListing: Codable, Sendable {
 }
 
 nonisolated struct SupabaseBooking: Codable, Sendable {
-    let id: String?
-    var customerId: String?
-    var customerName: String?
-    var providerId: String?
-    var providerName: String?
-    var serviceListingId: String?
-    var category: String?
-    var serviceTitle: String?
-    var status: String?
-    var scheduledDate: String?
-    var scheduledTime: String?
-    var address: String?
-    var zipCode: String?
-    var notes: String?
-    var photos: [String]?
-    var basePrice: Double?
-    var platformFee: Double?
-    var providerEarnings: Double?
-    var tipAmount: Double?
-    var totalPrice: Double?
-    var recurrence: String?
-    var parentBookingId: String?
-    var isTrackingEnabled: Bool?
-    var trackingStatus: String?
-    var createdAt: String?
+    var id: String? = nil
+    var customerId: String? = nil
+    var customerName: String? = nil
+    var providerId: String? = nil
+    var providerName: String? = nil
+    var serviceListingId: String? = nil
+    var category: String? = nil
+    var serviceTitle: String? = nil
+    var status: String? = nil
+    var scheduledDate: String? = nil
+    var scheduledTime: String? = nil
+    var address: String? = nil
+    var zipCode: String? = nil
+    var notes: String? = nil
+    var photos: [String]? = nil
+    var basePrice: Double? = nil
+    var platformFee: Double? = nil
+    var providerEarnings: Double? = nil
+    var tipAmount: Double? = nil
+    var totalPrice: Double? = nil
+    var recurrence: String? = nil
+    var parentBookingId: String? = nil
+    var isTrackingEnabled: Bool? = nil
+    var trackingStatus: String? = nil
+    var createdAt: Date? = nil
 
     nonisolated enum CodingKeys: String, CodingKey {
         case id, category, status, address, notes, photos, recurrence
@@ -577,13 +577,13 @@ nonisolated struct SupabaseBooking: Codable, Sendable {
 }
 
 nonisolated struct SupabaseReview: Codable, Sendable {
-    let id: String?
-    var bookingId: String?
-    var customerId: String?
-    var providerId: String?
-    var rating: Double?
-    var comment: String?
-    var createdAt: String?
+    var id: String? = nil
+    var bookingId: String? = nil
+    var customerId: String? = nil
+    var providerId: String? = nil
+    var rating: Double? = nil
+    var comment: String? = nil
+    var createdAt: Date? = nil
 
     nonisolated enum CodingKeys: String, CodingKey {
         case id, rating, comment
@@ -595,12 +595,12 @@ nonisolated struct SupabaseReview: Codable, Sendable {
 }
 
 nonisolated struct SupabaseConversation: Codable, Sendable {
-    let id: String?
-    var bookingId: String?
-    var customerId: String?
-    var providerId: String?
-    var lastMessage: String?
-    var updatedAt: String?
+    var id: String? = nil
+    var bookingId: String? = nil
+    var customerId: String? = nil
+    var providerId: String? = nil
+    var lastMessage: String? = nil
+    var updatedAt: Date? = nil
 
     nonisolated enum CodingKeys: String, CodingKey {
         case id
@@ -613,11 +613,11 @@ nonisolated struct SupabaseConversation: Codable, Sendable {
 }
 
 nonisolated struct SupabaseMessage: Codable, Sendable {
-    let id: String?
-    var conversationId: String?
-    var senderId: String?
-    var text: String?
-    var createdAt: String?
+    var id: String? = nil
+    var conversationId: String? = nil
+    var senderId: String? = nil
+    var text: String? = nil
+    var createdAt: Date? = nil
 
     nonisolated enum CodingKeys: String, CodingKey {
         case id, text
@@ -628,14 +628,14 @@ nonisolated struct SupabaseMessage: Codable, Sendable {
 }
 
 nonisolated struct SupabaseAvailabilitySlot: Codable, Sendable {
-    let id: String?
-    var providerId: String?
-    var dayOfWeek: Int?
-    var startTime: String?
-    var endTime: String?
-    var isRecurring: Bool?
-    var specificDate: String?
-    var isBlocked: Bool?
+    var id: String? = nil
+    var providerId: String? = nil
+    var dayOfWeek: Int? = nil
+    var startTime: String? = nil
+    var endTime: String? = nil
+    var isRecurring: Bool? = nil
+    var specificDate: String? = nil
+    var isBlocked: Bool? = nil
 
     nonisolated enum CodingKeys: String, CodingKey {
         case id
